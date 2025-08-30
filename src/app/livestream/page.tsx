@@ -1,116 +1,158 @@
-import React from 'react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { 
-  Video,
-  Play,
-  Users,
-  Heart,
-  MessageCircle,
-  Share2,
-  Home,
-  BarChart3,
-  Upload
-} from 'lucide-react';
+"use client";
+
+import { useState, useEffect } from "react";
+import { X, Gift, Send, Diamond, User } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Drawer } from "@/components/ui/drawer";
+import { Button } from "@/components/ui/button";
+
+const GIFT_ITEMS = [
+  { id: 1, name: "Rose", price: 1, icon: "🌹" },
+  { id: 2, name: "Heart", price: 5, icon: "❤️" },
+  { id: 3, name: "Crown", price: 100, icon: "👑" },
+  { id: 4, name: "Diamond", price: 500, icon: "💎" },
+];
 
 export default function Livestream() {
+  const router = useRouter();
+  const [viewerCount, setViewerCount] = useState(1234);
+  const [isStreaming, setIsStreaming] = useState(true);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  // Mock viewer count changes
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setViewerCount((prev) => prev + Math.floor(Math.random() * 10) - 4);
+    }, 2000);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    console.log(isDrawerOpen);
+  }, [isDrawerOpen]);
+
   return (
-    <div className="min-h-screen bg-white">
-      {/* Status Bar */}
-      <div className="h-1 bg-gradient-to-r from-red-500 via-pink-500 to-purple-500"></div>
-      
-      {/* Mobile Header */}
-      <header className="bg-white border-b border-gray-100 px-4 py-4">
-        <div className="flex items-center justify-between">
-          <h1 className="text-xl font-bold text-gray-900">Livestream</h1>
-          <Button className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-full text-sm font-medium">
-            <Video className="w-4 h-4 mr-2" />
-            Go Live
-          </Button>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <div className="px-4 py-6 space-y-6">
-        {/* Livestream Preview */}
-        <Card className="border-0 shadow-sm">
-          <CardContent className="p-6">
-            <div className="bg-gray-100 rounded-2xl p-8 text-center">
-              <div className="w-20 h-20 bg-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Video className="w-10 h-10 text-white" />
-              </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-3">Start Your Livestream</h2>
-              <p className="text-gray-600 mb-6">Connect with your audience in real-time</p>
-              <Button className="bg-red-500 hover:bg-red-600 text-white px-8 py-3 rounded-xl text-lg font-semibold">
-                <Play className="w-5 h-5 mr-2" />
-                Begin Streaming
-              </Button>
+    <div className="h-screen w-full bg-black text-white flex flex-col overflow-hidden">
+      {/* Top Bar */}
+      <div className="flex justify-between items-center p-4 bg-black/50 absolute top-0 w-full z-10">
+        <div className="flex items-center gap-4">
+          {/* Streaming Indicator */}
+          <div className="flex items-center gap-2">
+            <div
+              className={`h-2 w-2 rounded-full ${
+                isStreaming ? "animate-pulse bg-red-500" : "bg-gray-500"
+              }`}
+            />
+            <span className="text-sm">LIVE</span>
+          </div>
+          {/* Viewer Count */}
+          <div className="flex items-center gap-2">
+            <div className="flex -space-x-2">
+              {[1, 2, 3].map((_, i) => (
+                <div
+                  key={i}
+                  className="h-6 w-6 rounded-full bg-gray-400 border border-black"
+                />
+              ))}
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Live Stats */}
-        <div className="grid grid-cols-3 gap-4">
-          <Card className="border-0 shadow-sm bg-blue-50">
-            <CardContent className="p-4 text-center">
-              <Users className="w-8 h-8 text-blue-500 mx-auto mb-2" />
-              <p className="text-2xl font-bold text-blue-600">0</p>
-              <p className="text-sm text-blue-600">Viewers</p>
-            </CardContent>
-          </Card>
-          
-          <Card className="border-0 shadow-sm bg-red-50">
-            <CardContent className="p-4 text-center">
-              <Heart className="w-8 h-8 text-red-500 mx-auto mb-2" />
-              <p className="text-2xl font-bold text-red-600">0</p>
-              <p className="text-sm text-red-600">Likes</p>
-            </CardContent>
-          </Card>
-          
-          <Card className="border-0 shadow-sm bg-green-50">
-            <CardContent className="p-4 text-center">
-              <MessageCircle className="w-8 h-8 text-green-500 mx-auto mb-2" />
-              <p className="text-2xl font-bold text-green-600">0</p>
-              <p className="text-sm text-green-600">Comments</p>
-            </CardContent>
-          </Card>
+            <span>{viewerCount.toLocaleString()}</span>
+          </div>
         </div>
-
-        {/* Quick Actions */}
-        <Card className="border-0 shadow-sm">
-          <CardContent className="p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
-            <div className="space-y-3">
-              <Button className="w-full justify-start bg-gray-50 hover:bg-gray-100 text-gray-700 border-0">
-                <Share2 className="w-5 h-5 mr-3" />
-                Share Stream
-              </Button>
-              <Button className="w-full justify-start bg-gray-50 hover:bg-gray-100 text-gray-700 border-0">
-                <BarChart3 className="w-5 h-5 mr-3" />
-                View Analytics
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+        {/* Close Button */}
+        <Button
+          variant="ghost"
+          size="icon"
+          className="hover:bg-white/20 text-white rounded-full">
+          <X size={36} />
+        </Button>
       </div>
 
-      {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100">
-        <div className="flex items-center justify-around py-3">
-          <a href="/" className="flex flex-col items-center text-gray-400">
-            <Home className="w-6 h-6 mb-1" />
-            <span className="text-xs">Home</span>
-          </a>
-          <a href="/creator/dashboard" className="flex flex-col items-center text-gray-400">
-            <BarChart3 className="w-6 h-6 mb-1" />
-            <span className="text-xs">Dashboard</span>
-          </a>
-          <a href="/creator/upload" className="flex flex-col items-center text-gray-400">
-            <Upload className="w-6 h-6 mb-1" />
-            <span className="text-xs">Upload</span>
-          </a>
+      {/* Creator Button */}
+      <div className="absolute top-20 left-4 z-10">
+        <Button
+          variant="secondary"
+          className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white backdrop-blur-sm"
+          onClick={() => router.push("/creator/dashboard")}>
+          <User size={20} />
+          <span>Creator Panel</span>
+        </Button>
+      </div>
+
+      {/* Video Feed */}
+      <div className="flex-1 bg-gray-900">
+        <video
+          className="h-full w-full object-cover"
+          autoPlay
+          muted
+          loop
+          playsInline
+          src="/mock-video.mp4" // Add your video source here
+        />
+      </div>
+
+      {/* Footer */}
+      <div className="absolute bottom-0 w-full p-4 bg-gradient-to-t from-black to-transparent">
+        <div className="flex gap-2 items-center">
+          {/* Comment Input */}
+          <div className="flex-1 bg-white/20 rounded-full px-4 py-2">
+            <input
+              type="text"
+              placeholder="Add comment..."
+              className="bg-transparent w-full outline-none"
+            />
+          </div>
+          {/* Gift Button */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="hover:bg-white/20 text-white rounded-full"
+            onClick={() => setIsDrawerOpen(true)}>
+            <Gift size={36} />
+          </Button>
+          {/* Send Button */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="hover:bg-white/20 text-white rounded-full">
+            <Send size={36} />
+          </Button>
         </div>
-      </nav>
+      </div>
+
+      {/* Gift Drawer */}
+      {/* <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
+                <div className="px-4 py-8">
+                    <div className="flex justify-between items-center mb-6">
+                        <h2 className="text-lg font-semibold">Send a Gift</h2>
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => setIsDrawerOpen(false)}
+                        >
+                            <X size={24} />
+                        </Button>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                        {GIFT_ITEMS.map((gift) => (
+                            <Button
+                                key={gift.id}
+                                variant="secondary"
+                                className="flex flex-col items-center p-4 h-auto"
+                                onClick={() => {
+                                    console.log(`Selected gift: ${gift.name}`);
+                                }}
+                            >
+                                <span className="text-3xl mb-2">{gift.icon}</span>
+                                <span className="text-sm">{gift.name}</span>
+                                <div className="flex items-center gap-1 mt-2">
+                                    <Diamond size={16} className="text-blue-400" />
+                                    <span className="text-sm">{gift.price}</span>
+                                </div>
+                            </Button>
+                        ))}
+                    </div>
+                </div>
+            </Drawer> */}
     </div>
   );
 }
